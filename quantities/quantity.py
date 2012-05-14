@@ -472,7 +472,7 @@ class Quantity(np.ndarray):
     @with_doc(np.ndarray.max)
     def max(self, axis=None, out=None):
         return Quantity(
-            self.magnitude.max(),
+            self.magnitude.max(axis, out),
             self.dimensionality,
             copy=False
         )
@@ -480,19 +480,19 @@ class Quantity(np.ndarray):
     @with_doc(np.ndarray.min)
     def min(self, axis=None, out=None):
         return Quantity(
-            self.magnitude.min(),
+            self.magnitude.min(axis, out),
             self.dimensionality,
             copy=False
         )
 
     @with_doc(np.ndarray.argmin)
     def argmin(self,axis=None, out=None):
-        return self.magnitude.argmin()
+        return self.magnitude.argmin(axis, out)
 
     @with_doc(np.ndarray.ptp)
     def ptp(self, axis=None, out=None):
         return Quantity(
-            self.magnitude.ptp(),
+            self.magnitude.ptp(axis, out),
             self.dimensionality,
             copy=False
         )
