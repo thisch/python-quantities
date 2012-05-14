@@ -518,6 +518,14 @@ class Quantity(np.ndarray):
         )
         return Quantity(clipped, self.dimensionality, copy=False)
 
+    @with_doc(np.ndarray.squeeze)
+    def squeeze(self, axis=None):
+        return Quantity(
+            self.magnitude.squeeze(axis),
+            self.dimensionality,
+            copy=False
+        )
+
     @with_doc(np.ndarray.round)
     def round(self, decimals=0, out=None):
         return Quantity(
