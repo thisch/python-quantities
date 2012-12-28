@@ -6,6 +6,7 @@ import copy
 from functools import wraps
 import sys
 
+from cmath import phase as arg
 import numpy as np
 
 from . import markup
@@ -347,9 +348,17 @@ class Quantity(np.ndarray):
 
     @with_doc(np.ndarray.__repr__)
     def __repr__(self):
-        return '%s * %s'%(
-            repr(self.magnitude), self.dimensionality.string
-        )
+        if self.magnitude.size == 1 and \
+           self.magnitude.imag != 0.0:
+            m = self.magnitude
+            unit = self.dimensionality.string
+            return 'Real: %g%s\tImag: %g%s\nAbs:  %g%s\tArg:  %grad (%gdeg)' \
+                %(m.real.item(), unit, m.imag.item(), unit, \
+                abs(m).item(), unit, arg(m.item()), arg(m.item())*180/np.pi)
+        else:
+            return '%s * %s'%(
+                repr(self.magnitude), self.dimensionality.string
+            )
 
     @with_doc(np.ndarray.__str__)
     def __str__(self):
