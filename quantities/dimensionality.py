@@ -346,11 +346,43 @@ def _d_dimensionless(q1, out=None):
     if getattr(q1, 'dimensionality', None):
         raise ValueError("quantity must be dimensionless")
     return Dimensionality()
+
+def _d_dimensionless_or_complexangle(q1, out=None):
+    if np.iscomplexobj(q1):
+        if getattr(q1, 'dimensionality', None):
+            # q1 is not dimensionless
+            if np.any(q1.real):
+                # some elements have a non-zero real part
+                raise ValueError(
+                    "complex objects with a non-dimensionless quantity have to be purely imaginary"
+                )
+            else:
+                # all elements are purely imaginary
+                try:
+                    assert q1.units == unit_registry['radian']
+                except AssertionError:
+                    raise ValueError(
+                        'for purely imaginary quantities a unit of radians is expected, got "%s"' \
+                        % q1._dimensionality
+                    )
+        else:
+            # q1 is dimensionless
+            if np.any(q1.imag):
+                # some elements have a non-zero imag part
+                raise ValueError(
+                    "dimensionless quantites have to be purely real-valued"
+                )
+    else:
+        if getattr(q1, 'dimensionality', None):
+            raise ValueError("real valued quantities must be dimensionless")
+
+    return Dimensionality()
+
 p_dict[np.log] = _d_dimensionless
 p_dict[np.log10] = _d_dimensionless
 p_dict[np.log2] = _d_dimensionless
 p_dict[np.log1p] = _d_dimensionless
-p_dict[np.exp] = _d_dimensionless
+p_dict[np.exp] = _d_dimensionless_or_complexangle
 p_dict[np.expm1] = _d_dimensionless
 p_dict[np.logaddexp] = _d_dimensionless
 p_dict[np.logaddexp2] = _d_dimensionless
