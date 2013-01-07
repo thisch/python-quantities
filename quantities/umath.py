@@ -121,19 +121,19 @@ def trapz(y, x=None, dx=1.0, axis=-1):
         ret = np.trapz(y.magnitude , x.magnitude, dx.magnitude, axis)
         return Quantity ( ret, y.units * x.units)
 
-@with_doc(np.exp)
-def exp(x, out=None):
-    """
-    Raises a ValueError if input cannot be rescaled to radians.
+# @with_doc(np.exp)
+# def exp(x, out=None):
+#     """
+#     Raises a ValueError if input cannot be rescaled to radians.
 
-    Returns a dimensionless quantity if the input is not a quantity or if
-    the input can be rescaled to radians.
-    """
-    if not isinstance(x, Quantity):
-        return np.exp(x, out)
+#     Returns a dimensionless quantity if the input is not a quantity or if
+#     the input can be rescaled to radians.
+#     """
+#     if not isinstance(x, Quantity):
+#         return np.exp(x, out)
 
-    return Quantity(np.exp(x.rescale(radian).magnitude, out),
-                        copy=False)
+#     return Quantity(np.exp(x.rescale(radian).magnitude, out),
+#                         copy=False)
 
 @with_doc(np.sin)
 def sin(x, out=None):

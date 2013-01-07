@@ -348,17 +348,34 @@ class Quantity(np.ndarray):
 
     @with_doc(np.ndarray.__repr__)
     def __repr__(self):
-        if self.magnitude.size == 1 and \
-           self.magnitude.imag != 0.0:
-            m = self.magnitude
-            unit = self.dimensionality.string
-            return 'Real: %g%s\tImag: %g%s\nAbs:  %g%s\tArg:  %grad (%gdeg)' \
-                %(m.real.item(), unit, m.imag.item(), unit, \
-                abs(m).item(), unit, arg(m.item()), arg(m.item())*180/np.pi)
+        m = self.magnitude
+        if markup.config.use_unicode:
+            dims = self.dimensionality.unicode
         else:
-            return '%s * %s'%(
-                repr(self.magnitude), self.dimensionality.string
-            )
+            #try block is because dimensionless does not have a 'string' attr
+            try:
+                dims = self.dimensionality.string
+            except:
+                dims = self.dimensionality.name
+
+        if m.size == 1:
+            if isinstance(m.item(), complex):
+                if m == 0:
+                    return 'Real: 0%s\tImag: 0 %s' % (dims, dims)
+                elif m.imag == 0:
+                    return '%g %s' % (m.real.item(), dims)
+                elif m.real == 0:
+                    return '%gj %s' % (m.imag.item(), dims)
+                else:
+                    if dims == 'dimensionless':
+                        dims = ''
+                    return 'Real: %g%s\tImag: %g%s\nAbs:  %g%s\tArg:  %g rad = %g deg' \
+                        %(m.real.item(), dims, m.imag.item(), dims, \
+                          abs(m).item(), dims, arg(m.item()), arg(m.item())*180/np.pi)
+            else:
+                return '%g %s' % (m.item(), dims)
+        else:
+            return '%s * %s'%(repr(m), dims)
 
     @with_doc(np.ndarray.__str__)
     def __str__(self):
